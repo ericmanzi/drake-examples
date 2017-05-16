@@ -45,9 +45,25 @@ classdef CartDoublePendPlant < Manipulator
     end
     
     function x = getInitialState(obj)
-      x = .1*randn(4,1);
+      %x = .1*randn(4,1);
+      x = .1*randn(6,1);
     end
     
+    function c = balanceDoublePendLQRTree(obj, Q, R)
+        options.num_branches = 5;
+        options.stabilize=true;
+        options.xs=[0;0;0;0;0;0;];
+        %options.xs=[0;0;0;0;];
+        options.Tslb=4;
+        options.Tsub=6;
+        options.degL1=4;
+        %options.plot_basins=true;
+        %param3=@()rand(6,1).*[2*pi;10;0;0;0;0;]-[pi;5;0;0;0;0;];
+        %param3=@()rand(4,1).*[2*pi;10;0;0]-[pi;5;0;0];
+        param3=@()rand(4,1).*[2*pi;1;0;0]-[pi;0.5;0;0];
+        c=LQRTree.buildLQRTree(obj, obj.xG, obj.uG, param3, Q, R, options);
+    end
+
   end
   
   methods(Static)
